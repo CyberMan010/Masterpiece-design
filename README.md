@@ -4,9 +4,9 @@ Welcome to **Roxana**, an eCommerce platform for unique, handmade PlexiGlass fur
 
 ## Features
 
-- **Custom Design**: Design your own PlexiGlass furniture using our intuitive 3D modeling tool.
+- **Custom Design**: Design your own PlexiGlass furniture using our intuitive modeling tool.
 - **Pre-made Collection**: Choose from a wide range of already crafted PlexiGlass furniture.
-- **Secure Payments**: Integrated with secure payment gateways (e.g., PayPal, Stripe).
+- **Secure Payments**: Integrated with secure payment gateways  **PayPal**.
 - **User Accounts**: Sign up to save your designs, track orders, and manage purchases.
 - **Responsive Design**: Fully optimized for mobile and desktop viewing.
 - **Customer Support**: 24/7 customer support to assist with any inquiries.
@@ -14,10 +14,10 @@ Welcome to **Roxana**, an eCommerce platform for unique, handmade PlexiGlass fur
 ## Tech Stack
 
 - **Frontend**: React JS, Tailwind CSS
-- **Backend**: Node.js, Express, MongoDB
+- **Backend**: Node.js, Express, Postgresql
 - **Payment Integration**: PayPal API
 - **Authentication**: JWT (JSON Web Tokens)
-- **Hosting**: Deployed on AWS
+- **Hosting**: Deployed on Netlify
 
 ## Installation
 
