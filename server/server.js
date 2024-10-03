@@ -4,8 +4,8 @@ const helmet = require('helmet');
 require("dotenv").config();
 const userRouter = require("./routes/userroutes");
 const { sequelize } = require('./models')
-const productRouter = require("./routes/productroutes")
-const categoryRouter = require("./routes/categoryroutes")
+const productRoutes = require("./routes/productroutes")
+const categoryRoutes = require("./routes/categoryroutes")
 
 // Initialize express app
 const app = express();
@@ -19,9 +19,9 @@ app.use(express.urlencoded({ extended: true }));  // Parse URL-encoded bodies
 
 
 // Routes
-app.use('/users', userRouter);
-app.use('/products', productRouter);
-app.use('/categories', categoryRouter);
+app.use('/users', userRouter)
+app.use("/api", productRoutes)
+app.use("/api/categories", categoryRoutes)
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error(err.stack);
@@ -30,7 +30,7 @@ app.use((err, req, res, next) => {
 
 // Start server
 const PORT = process.env.PORT || 5000;
-sequelize.sync({ force: true }) // Set force to true to drop and recreate tables on every app start
+sequelize.sync({ force: false }) // Set force to true to drop and recreate tables on every app start
   .then(() => {
     console.log('Database synchronized');
     app.listen(PORT, () => {

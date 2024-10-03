@@ -1,4 +1,4 @@
-const Category = require('../models/category'); // Adjust the path as needed
+const { Category } = require('../models'); // Adjust the path as needed
 
 const categoryController = {
   getAllCategories: async (req, res) => {
@@ -6,6 +6,7 @@ const categoryController = {
       const categories = await Category.findAll();
       res.json(categories);
     } catch (error) {
+      console.error('Error fetching categories:', error);
       res.status(500).json({ message: 'Error fetching categories', error: error.message });
     }
   },
