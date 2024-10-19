@@ -5,8 +5,12 @@ const upload = require("../config/multerConfig")
 
 router.post('/register', authController.register);
 router.post('/login', authController.login);
-router.get('/protected', authenticateToken, authController.protected);
-router.get('/profile', authenticateToken, authController.getProfile);
-router.put('/profile', authenticateToken, authController.updateProfile);
+router.get('/protected',  authController.protected);
+router.get('/profile',  authController.getProfile);
+router.put('/profile',  authController.updateProfile);
+router.get('/all', authenticateToken, authController.getAllUsers);
+router.post('/create', authenticateToken, authController.createUser);
+router.put('/:id', authenticateToken, authController.updateUser);
+router.delete('/:id', authenticateToken, authController.deleteUser);
 
 module.exports = router;

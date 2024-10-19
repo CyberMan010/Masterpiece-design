@@ -117,3 +117,66 @@ exports.updateProfile = async (req, res) => {
 exports.protected = (req, res) => {
   res.json({ message: 'This is a protected route', userId: req.userId, userType: req.userType });
 };
+
+exports.getAllUsers = async (req, res) => {
+  try {
+    const users = await User.findAll({
+      attributes: ['id', 'name', 'email', 'user_type'] // Add any other fields you want to include
+    });
+    res.json(users);
+  } catch (error) {
+    console.error('Get all users error:', error);
+    res.status(500).json({ message: 'Error fetching users' });
+  }
+};
+
+exports.createUser = async (req, res) => {
+  try {
+    const { name, email, password, user_type } = req.body;
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const newUser = await User.create({
+      name,
+      email,
+      password: hashedPassword,
+      user_type
+    });
+    res.status(201).json(newUser);
+  } catch (error) {
+    console.error('Create user error:', error);
+    res.status(500).json({ message: 'Error creating user' });
+  }
+};
+
+exports.updateUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name, email, user_type } = req.body;
+    const user = await User.findByPk(id);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    user.name = name || user.name;
+    user.email = email || user.email;
+    user.user_type = user_type || user.user_type;
+    await user.save();
+    res.json(user);
+  } catch (error) {
+    console.error('Update user error:', error);
+    res.status(500).json({ message: 'Error updating user' });
+  }
+};
+
+exports.deleteUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const user = await User.findByPk(id);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    await user.destroy();
+    res.json({ message: 'User deleted successfully' });
+  } catch (error) {
+    console.error('Delete user error:', error);
+    res.status(500).json({ message: 'Error deleting user' });
+  }
+};

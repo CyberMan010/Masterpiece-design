@@ -8,7 +8,7 @@ const productRoutes = require('./routes/productRoutes');
 const categoryRoutes = require('./routes/categoryRoutes');
 const path = require('path');
 const multer = require('multer');
-
+const searchRoute = require('./routes/searchroute');
 
 // Initialize express app
 const app = express();
@@ -32,6 +32,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads'), {
     res.set('Access-Control-Allow-Origin', '*');
   }
 }));
+app.use('/api', searchRoute);
 app.use('/users', userRouter)
 app.use("/api/products", productRoutes)
 app.use("/api/categories", categoryRoutes)
