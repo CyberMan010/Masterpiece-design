@@ -1,29 +1,40 @@
-const { DataTypes } = require('sequelize');
+  'use strict';
+  const { Model } = require('sequelize');
 
-module.exports = (sequelize) => {
-  const Category = sequelize.define('Category', {
-    category_id: {
-      type: DataTypes.INTEGER,
-      primaryKey: true,
-      autoIncrement: true,
-    },
-    name: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      unique: true,
-    },
-  }, {
-    tableName: 'categories',
-    timestamps: false
-  });
+  module.exports = (sequelize, DataTypes) => {
+    class Category extends Model {
+      static associate(models) {
+        // Define associations here
+        Category.hasMany(models.Product, {
+          foreignKey: 'category_id',
+          as: 'products'
+        });
+        
+        
+      }
+    }
 
-  Category.associate = (models) => {
-    Category.belongsToMany(models.Product, {
-      through: 'ProductCategory',
-      foreignKey: 'category_id',
-      otherKey: 'product_id'
+    Category.init({
+      category_id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true,
+      },
+      name: {
+        type: DataTypes.STRING(100),
+        allowNull: false,
+      },
+      image_url: { // Add this new field
+        type: DataTypes.STRING,
+        allowNull: true, // Can be nullable if image upload is optional
+      }
+    },
+     {
+      sequelize,
+      modelName: 'Category',
+      tableName: 'categories',
+      timestamps: false
     });
-  };
 
-  return Category;
-};
+    return Category;
+  };

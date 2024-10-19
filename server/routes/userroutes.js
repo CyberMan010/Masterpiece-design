@@ -1,7 +1,7 @@
 const authController = require('../controllers/userController');
 const router = require('express').Router();
 const { authenticateToken } = require('../Middleware/authMiddleware');
-
+const upload = require("../config/multerConfig")
 
 router.post('/register', authController.register);
 router.post('/login', authController.login);

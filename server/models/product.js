@@ -1,7 +1,21 @@
-const { DataTypes } = require('sequelize');
+'use strict';
+const { Model } = require('sequelize');
 
-module.exports = (sequelize) => {
-  const Product = sequelize.define('Product', {
+module.exports = (sequelize, DataTypes) => {
+  class Product extends Model {
+    static associate(models) {
+      // Many-to-Many relationship with Category
+      Product.belongsTo(models.Category, {
+        foreignKey: 'category_id',
+        as: 'category'
+      });
+      
+      
+
+    }
+  }
+
+  Product.init({
     product_id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
@@ -27,22 +41,27 @@ module.exports = (sequelize) => {
       type: DataTypes.BOOLEAN,
       allowNull: false,
     },
-    created_at: {
-      type: DataTypes.DATE,
-      defaultValue: DataTypes.NOW,
+    image_url: {
+      type: DataTypes.STRING(255),
+      allowNull: true,
+    },
+    category_id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: 'categories', // Make sure the table name is correct
+        key: 'category_id'
+      },
+      onDelete: 'CASCADE',
+      onUpdate: 'CASCADE'
     }
   }, {
+    sequelize,
+    modelName: 'Product',
     tableName: 'products',
     timestamps: false
   });
-
-  Product.associate = (models) => {
-    Product.belongsToMany(models.Category, {
-      through: 'ProductCategory',
-      foreignKey: 'product_id',
-      otherKey: 'category_id'
-    });
-  };
+  
 
   return Product;
 };

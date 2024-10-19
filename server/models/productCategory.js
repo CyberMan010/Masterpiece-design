@@ -1,24 +1,31 @@
-const { DataTypes } = require('sequelize');
+'use strict';
+const { Model } = require('sequelize');
 
-module.exports = (sequelize) => {
-  const ProductCategory = sequelize.define('ProductCategory', {
+module.exports = (sequelize, DataTypes) => {
+  class ProductCategory extends Model {
+    static associate(models) {
+      // associations can be defined here if needed
+    }
+  }
+  
+  ProductCategory.init({
     product_id: {
       type: DataTypes.INTEGER,
-      primaryKey: true,
       references: {
-        model: 'Products',
+        model: 'Product',
         key: 'product_id'
       }
     },
     category_id: {
       type: DataTypes.INTEGER,
-      primaryKey: true,
       references: {
-        model: 'Categories',
+        model: 'Category',
         key: 'category_id'
       }
     }
   }, {
+    sequelize,
+    modelName: 'ProductCategory',
     tableName: 'product_categories',
     timestamps: false
   });

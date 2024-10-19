@@ -1,61 +1,107 @@
-const { Category } = require('../models'); // Adjust the path as needed
+const { Category } = require('../models');
 
-const categoryController = {
-  getAllCategories: async (req, res) => {
-    try {
-      const categories = await Category.findAll();
-      res.json(categories);
-    } catch (error) {
-      console.error('Error fetching categories:', error);
-      res.status(500).json({ message: 'Error fetching categories', error: error.message });
-    }
-  },
+// Create a new category
+exports.createCategory = async (req, res) => {
+  try {
+    const { name } = req.body;
+    const image_url = req.file ? `/uploads/${req.file.filename}` : null; // Get the image path if uploaded
+  
 
-  createCategory: async (req, res) => {
-    try {
-      const { name } = req.body;
-      if (!name) {
-        return res.status(400).json({ message: 'Category name is required' });
-      }
-      const newCategory = await Category.create({ name });
-      res.status(201).json(newCategory);
-    } catch (error) {
-      res.status(500).json({ message: 'Error creating category', error: error.message });
+    // Validate the category name
+    if (!name || name.trim() === '') {
+      return res.status(400).json({ message: 'Category name is required' });
     }
-  },
 
-  updateCategory: async (req, res) => {
-    try {
-      const { id } = req.params;
-      const { name } = req.body;
-      if (!name) {
-        return res.status(400).json({ message: 'Category name is required' });
-      }
-      const category = await Category.findByPk(id);
-      if (!category) {
-        return res.status(404).json({ message: 'Category not found' });
-      }
-      category.name = name;
-      await category.save();
-      res.json(category);
-    } catch (error) {
-      res.status(500).json({ message: 'Error updating category', error: error.message });
-    }
-  },
-
-  deleteCategory: async (req, res) => {
-    try {
-      const { id } = req.params;
-      const category = await Category.findByPk(id);
-      if (!category) {
-        return res.status(404).json({ message: 'Category not found' });
-      }
-      await category.destroy();
-      res.json({ message: 'Category deleted successfully' });
-    } catch (error) {
-      res.status(500).json({ message: 'Error deleting category', error: error.message });
-    }
+    // Create the new category
+    const category = await Category.create({ name,
+      image_url });
+    
+    // Return the newly created category
+    res.status(201).json(category);
+  } catch (error) {
+    console.error('Error creating category:', error);
+    res.status(500).json({ message: 'Internal server error' });
   }
 };
 
-module.exports = categoryController;
+// Get all categories
+exports.getCategories = async (req, res) => {
+  try {
+    const categories = await Category.findAll();
+    res.status(200).json(categories);
+  } catch (error) {
+    console.error('Error fetching categories:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
+// Get a category by ID
+exports.getCategoryById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const category = await Category.findByPk(id);
+
+    if (!category) {
+      return res.status(404).json({ message: 'Category not found' });
+    }
+
+    res.status(200).json(category);
+  } catch (error) {
+    console.error('Error fetching category:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
+// Update a category
+exports.updateCategory = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name } = req.body; // This will only work if `name` is sent as plain text.
+
+    // If you're using multer for image uploads, you might want to check if an image is being uploaded.
+    const image_url = req.file ? `/uploads/${req.file.filename}` : null;
+
+    // Find the category by ID
+    const category = await Category.findByPk(id);
+
+    if (!category) {
+      return res.status(404).json({ message: 'Category not found' });
+    }
+
+    // Update the category fields
+    category.name = name;
+    if (image_url) {
+      category.image_url = image_url; // Update the image URL if a new image is uploaded
+    }
+    
+    await category.save();
+
+    res.status(200).json({ message: 'Category updated successfully', category });
+  } catch (error) {
+    console.error('Error updating category:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
+
+// Delete a category
+exports.deleteCategory = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Find the category by ID
+    const category = await Category.findByPk(id);
+
+    if (!category) {
+      return res.status(404).json({ message: 'Category not found' });
+    }
+
+    // Delete the category
+    await category.destroy();
+
+    res.status(200).json({ message: 'Category deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting category:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};

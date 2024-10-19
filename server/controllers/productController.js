@@ -1,66 +1,130 @@
 const { Product, Category } = require('../models');
 
-const productController = {
-  getAllProducts: async (req, res) => {
-    try {
-      const products = await Product.findAll({ include: Category });
-      res.json(products);
-    } catch (error) {
-      res.status(500).json({ message: 'Error fetching products', error: error.message });
-    }
-  },
+// Create a new product
+exports.createProduct = async (req, res) => {
+  try {
+    const { name, description, price, stock_quantity, is_custom, category_id } = req.body;
+    const image_url = req.file ? `/uploads/${req.file.filename}` : null;
 
-  getProductById: async (req, res) => {
-    try {
-      const product = await Product.findByPk(req.params.id, { include: Category });
-      if (!product) {
-        return res.status(404).json({ message: 'Product not found' });
-      }
-      res.json(product);
-    } catch (error) {
-      res.status(500).json({ message: 'Error fetching product', error: error.message });
+    // Check if the category exists
+    const category = await Category.findByPk(category_id);
+    if (!category) {
+      return res.status(404).json({ message: 'Category not found' });
     }
-  },
 
-  createProduct: async (req, res) => {
-    try {
-      const newProduct = await Product.create(req.body);
-      res.status(201).json(newProduct);
-    } catch (error) {
-      res.status(500).json({ message: 'Error creating product', error: error.message });
-    }
-  },
+    // Create the new product
+    const product = await Product.create({
+      name,
+      description,
+      price,
+      stock_quantity,
+      is_custom,
+      image_url,
+      category_id
+    });
 
-  updateProduct: async (req, res) => {
-    try {
-      const [updated] = await Product.update(req.body, {
-        where: { id: req.params.id }
-      });
-      if (updated) {
-        const updatedProduct = await Product.findByPk(req.params.id);
-        res.json(updatedProduct);
-      } else {
-        res.status(404).json({ message: 'Product not found' });
-      }
-    } catch (error) {
-      res.status(500).json({ message: 'Error updating product', error: error.message });
-    }
-  },
-
-  deleteProduct: async (req, res) => {
-    try {
-      const deleted = await Product.destroy({
-        where: { id: req.params.id }
-      });
-      if (deleted) {
-        res.status(204).send();
-      } else {
-        res.status(404).json({ message: 'Product not found' });
-      }
-    } catch (error) {
-      res.status(500).json({ message: 'Error deleting product', error: error.message });
-    }
+    res.status(201).json(product);
+  } catch (error) {
+    console.error('Error creating product:', error);
+    res.status(500).json({ message: 'Internal server error' });
   }
 };
 
-module.exports = productController;
+// Get all products
+exports.getProducts = async (req, res) => {
+  try {
+    const products = await Product.findAll({
+      include: {
+        model: Category,
+        as: 'category',
+        attributes: ['name'] // Only include the category name
+      }
+    });
+    res.status(200).json(products);
+  } catch (error) {
+    console.error('Error fetching products:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
+// Get a product by ID
+exports.getProductById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const product = await Product.findByPk(id, {
+      include: {
+        model: Category,
+        as: 'category',
+        attributes: ['name'] // Only include the category name
+      }
+    });
+
+    if (!product) {
+      return res.status(404).json({ message: 'Product not found' });
+    }
+
+    res.status(200).json(product);
+  } catch (error) {
+    console.error('Error fetching product:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
+// Update a product
+exports.updateProduct = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name, description, price, stock_quantity, is_custom, category_id } = req.body;
+    const image_url = req.file ?  `/uploads/${req.file.filename}` : null;
+
+    // Find the product by ID
+    const product = await Product.findByPk(id);
+    console.log('Found product:', product); // Log the found product
+
+
+    if (!product) {
+      return res.status(404).json({ message: 'Product not found' });
+    }
+
+    // Update the product fields
+    product.name = name;
+    product.description = description;
+    product.price = price;
+    product.stock_quantity = stock_quantity;
+    product.is_custom = is_custom;
+    product.category_id = category_id;
+
+    if (image_url) {
+      product.image_url = image_url; // Update the image only if a new one is uploaded
+    }
+
+    await product.save();
+
+    res.status(200).json({ message: 'Product updated successfully', product });
+  } catch (error) {
+    console.error('Error updating product:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
+// Delete a product
+exports.deleteProduct = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Find the product by ID
+    const product = await Product.findByPk(id);
+
+    if (!product) {
+      return res.status(404).json({ message: 'Product not found' });
+    }
+
+    // Delete the product
+    await product.destroy();
+
+    res.status(200).json({ message: 'Product deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting product:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};

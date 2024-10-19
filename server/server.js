@@ -3,9 +3,12 @@ const cors = require('cors');
 const helmet = require('helmet');
 require("dotenv").config();
 const userRouter = require("./routes/userroutes");
-const { sequelize } = require('./models')
-const productRoutes = require("./routes/productroutes")
-const categoryRoutes = require("./routes/categoryroutes")
+const db = require('./models');
+const productRoutes = require('./routes/productRoutes');
+const categoryRoutes = require('./routes/categoryRoutes');
+const path = require('path');
+const multer = require('multer');
+
 
 // Initialize express app
 const app = express();
@@ -13,14 +16,24 @@ const app = express();
 
 // Middleware
 app.use(cors());  // Enable CORS for all routes
-app.use(helmet());  // Set security HTTP headers
+app.use(
+  helmet({
+    crossOriginResourcePolicy: { policy: "cross-origin" },
+  })
+);  // Set security HTTP headers
 app.use(express.json());  // Parse JSON bodies
 app.use(express.urlencoded({ extended: true }));  // Parse URL-encoded bodies
 
 
+
 // Routes
+app.use('/uploads', express.static(path.join(__dirname, 'uploads'), {
+  setHeaders: function (res, path, stat) {
+    res.set('Access-Control-Allow-Origin', '*');
+  }
+}));
 app.use('/users', userRouter)
-app.use("/api", productRoutes)
+app.use("/api/products", productRoutes)
 app.use("/api/categories", categoryRoutes)
 // Error handling middleware
 app.use((err, req, res, next) => {
@@ -30,13 +43,13 @@ app.use((err, req, res, next) => {
 
 // Start server
 const PORT = process.env.PORT || 5000;
-sequelize.sync({ force: false }) // Set force to true to drop and recreate tables on every app start
-  .then(() => {
-    console.log('Database synchronized');
-    app.listen(PORT, () => {
-      console.log(`Server is running on port ${PORT}`);
-    });
-  })
-  .catch(err => {
-    console.error('Unable to sync database:', err);
+
+db.sequelize.sync({ force: false }).then(() => {
+  console.log('Database synced');
+  const PORT = process.env.PORT || 5000;
+  app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
   });
+}).catch((err) => {
+  console.error('Failed to sync database:', err);
+});
