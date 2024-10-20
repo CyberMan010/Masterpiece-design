@@ -9,6 +9,7 @@ const categoryRoutes = require('./routes/categoryRoutes');
 const path = require('path');
 const multer = require('multer');
 const searchRoute = require('./routes/searchroute');
+const contactRoutes = require('./routes/contactRoutes'); // Import contact routes
 
 // Initialize express app
 const app = express();
@@ -33,6 +34,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads'), {
   }
 }));
 app.use('/api', searchRoute);
+app.use('/api', contactRoutes); // Add contact routes
 app.use('/users', userRouter)
 app.use("/api/products", productRoutes)
 app.use("/api/categories", categoryRoutes)
