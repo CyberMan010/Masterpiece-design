@@ -9,7 +9,7 @@ const categoryRoutes = require('./routes/categoryRoutes');
 const path = require('path');
 const multer = require('multer');
 const searchRoute = require('./routes/searchroute');
-const contactRoutes = require('./routes/contactRoutes'); // Import contact routes
+const contactRoutes = require('./routes/contactRoutes'); // Ensure this is a function or a router
 
 // Initialize express app
 const app = express();
@@ -38,6 +38,8 @@ app.use('/api', contactRoutes); // Add contact routes
 app.use('/users', userRouter)
 app.use("/api/products", productRoutes)
 app.use("/api/categories", categoryRoutes)
+app.use('/api/contact', contactRoutes); // Ensure this matches the endpoint
+
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error(err.stack);
