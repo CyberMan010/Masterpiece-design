@@ -10,6 +10,7 @@ const path = require('path');
 const multer = require('multer');
 const searchRoute = require('./routes/searchroute');
 const contactRoutes = require('./routes/contactRoutes'); // Ensure this is a function or a router
+const orderRoutes = require('./routes/orderroutes'); // Ensure this import is correct
 
 // Initialize express app
 const app = express();
@@ -38,6 +39,7 @@ app.use('/api/contacts', contactRoutes); // Correct path for contacts
 app.use('/users', userRouter)
 app.use("/api/products", productRoutes)
 app.use("/api/categories", categoryRoutes)
+app.use('/api/orders', orderRoutes); // Ensure this line is present
 
 // Error handling middleware
 app.use((err, req, res, next) => {
