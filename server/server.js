@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
-require("dotenv").config();
+require('dotenv').config();
 const userRouter = require("./routes/userroutes");
 const db = require('./models');
 const productRoutes = require('./routes/productRoutes');
@@ -33,12 +33,11 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads'), {
     res.set('Access-Control-Allow-Origin', '*');
   }
 }));
-app.use('/api', searchRoute);
-app.use('/api', contactRoutes); // Add contact routes
+app.use('/api/search', searchRoute);
+app.use('/api/contacts', contactRoutes); // Correct path for contacts
 app.use('/users', userRouter)
 app.use("/api/products", productRoutes)
 app.use("/api/categories", categoryRoutes)
-app.use('/api/contact', contactRoutes); // Ensure this matches the endpoint
 
 // Error handling middleware
 app.use((err, req, res, next) => {
@@ -49,9 +48,8 @@ app.use((err, req, res, next) => {
 // Start server
 const PORT = process.env.PORT || 5000;
 
-db.sequelize.sync({ force: false }).then(() => {
+db.sequelize.sync({ alter: true }).then(() => {
   console.log('Database synced');
-  const PORT = process.env.PORT || 5000;
   app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
   });

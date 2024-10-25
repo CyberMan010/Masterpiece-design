@@ -2,66 +2,45 @@
 const { Model } = require('sequelize');
 
 module.exports = (sequelize, DataTypes) => {
-  class Product extends Model {
-    static associate(models) {
-      // Many-to-Many relationship with Category
-      Product.belongsTo(models.Category, {
-        foreignKey: 'category_id',
-        as: 'category'
-      });
-      
-      
-
-    }
-  }
-
-  Product.init({
+  const Product = sequelize.define('Product', {
     product_id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
-      autoIncrement: true,
+      autoIncrement: true
     },
     name: {
-      type: DataTypes.STRING(100),
-      allowNull: false,
+      type: DataTypes.STRING,
+      allowNull: false
     },
-    description: {
-      type: DataTypes.TEXT,
-      allowNull: true,
-    },
+    description: DataTypes.TEXT,
     price: {
       type: DataTypes.DECIMAL(10, 2),
-      allowNull: false,
+      allowNull: false
     },
     stock_quantity: {
       type: DataTypes.INTEGER,
       allowNull: false,
+      defaultValue: 0
     },
+    image_url: DataTypes.STRING,
     is_custom: {
       type: DataTypes.BOOLEAN,
-      allowNull: false,
-    },
-    image_url: {
-      type: DataTypes.STRING(255),
-      allowNull: true,
+      defaultValue: false
     },
     category_id: {
       type: DataTypes.INTEGER,
-      allowNull: false,
       references: {
-        model: 'categories', // Make sure the table name is correct
+        model: 'categories',
         key: 'category_id'
-      },
-      onDelete: 'CASCADE',
-      onUpdate: 'CASCADE'
+      }
     }
   }, {
-    sequelize,
-    modelName: 'Product',
     tableName: 'products',
-    timestamps: false
+    timestamps: true
   });
-  
+
+  Product.associate = (models) => {
+    Product.belongsTo(models.Category, { foreignKey: 'category_id', as: 'category' });  };
 
   return Product;
 };

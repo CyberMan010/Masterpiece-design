@@ -30,13 +30,14 @@ exports.createProduct = async (req, res) => {
   }
 };
 
+
 // Get all products
 exports.getProducts = async (req, res) => {
   try {
     const products = await Product.findAll({
       include: {
         model: Category,
-        as: 'category',
+        as: 'category', // Ensure this matches the alias in the model
         attributes: ['name'] // Only include the category name
       }
     });
