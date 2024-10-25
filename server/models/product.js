@@ -33,6 +33,11 @@ module.exports = (sequelize, DataTypes) => {
         model: 'categories',
         key: 'category_id'
       }
+    },
+    is_active: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: true,
+      allowNull: false
     }
   }, {
     tableName: 'products',
