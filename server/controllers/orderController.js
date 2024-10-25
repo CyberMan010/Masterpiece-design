@@ -5,7 +5,17 @@ exports.createOrder = async (req, res) => {
 
   try {
     const { total_amount, items, shipping_address, payment_info } = req.body;
-    const userId = req.user.id;
+    const userId = req.user.userId; // Changed from req.user.id to req.user.userId
+
+    // Validate user
+    if (!userId) {
+      throw new Error('User ID is required');
+    }
+
+    // Convert payment_info to string if it's an object
+    const stringifiedPaymentInfo = typeof payment_info === 'object' 
+      ? JSON.stringify(payment_info) 
+      : payment_info;
 
     // Check inventory
     for (let item of items) {
@@ -20,7 +30,7 @@ exports.createOrder = async (req, res) => {
       total_amount,
       status: 'pending',
       shipping_address,
-      payment_info
+      payment_info: stringifiedPaymentInfo
     }, { transaction: t });
 
     const orderItems = items.map(item => ({
@@ -42,7 +52,6 @@ exports.createOrder = async (req, res) => {
     }
 
     await t.commit();
-
     res.status(201).json({ message: 'Order created successfully', order_id: order.order_id });
   } catch (error) {
     await t.rollback();
