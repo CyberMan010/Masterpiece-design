@@ -11,6 +11,8 @@ const multer = require('multer');
 const searchRoute = require('./routes/searchroute');
 const contactRoutes = require('./routes/contactRoutes'); // Ensure this is a function or a router
 const orderRoutes = require('./routes/orderroutes'); // Ensure this import is correct
+const bodyParser = require('body-parser');
+const { authenticateToken } = require('./middleware/authMiddleware'); // Import your middleware
 
 // Initialize express app
 const app = express();
@@ -25,8 +27,7 @@ app.use(
 );  // Set security HTTP headers
 app.use(express.json());  // Parse JSON bodies
 app.use(express.urlencoded({ extended: true }));  // Parse URL-encoded bodies
-
-
+app.use(bodyParser.json());
 
 // Routes
 app.use('/uploads', express.static(path.join(__dirname, 'uploads'), {
@@ -36,7 +37,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads'), {
 }));
 app.use('/api/search', searchRoute);
 app.use('/api/contacts', contactRoutes); // Correct path for contacts
-app.use('/users', userRouter)
+app.use('/users', userRouter); // This sets the base path for user routes
 app.use("/api/products", productRoutes)
 app.use("/api/categories", categoryRoutes)
 app.use('/api/orders', orderRoutes); // Ensure this line is present

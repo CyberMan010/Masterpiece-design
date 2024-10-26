@@ -59,3 +59,25 @@ exports.createOrder = async (req, res) => {
     res.status(500).json({ message: 'Internal server error', error: error.message });
   }
 };
+
+exports.getUserOrders = async (req, res) => {
+  try {
+    const userId = req.userId; // Assuming you have user authentication and userId is available
+
+    const orders = await Order.findAll({
+      where: { user_id: userId },
+      include: [
+        {
+          model: OrderItem,
+          include: [{ model: Product, attributes: ['name', 'price', 'image_url'] }]
+        }
+      ],
+      order: [['created_at', 'DESC']] // Use the correct column name
+    });
+
+    res.status(200).json(orders);
+  } catch (error) {
+    console.error('Error fetching user orders:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};

@@ -65,7 +65,7 @@ exports.login = async (req, res) => {
 exports.getProfile = async (req, res) => {
   try {
     const user = await User.findByPk(req.userId, {
-      attributes: ['id', 'name', 'email']
+      attributes: ['id', 'name', 'email', 'default_address'] // Only include necessary fields
     });
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
@@ -83,7 +83,7 @@ exports.getProfile = async (req, res) => {
 
 exports.updateProfile = async (req, res) => {
   try {
-    const { name, email } = req.body;
+    const { name, email, defaultAddress, occupation, paymentMethod } = req.body;
     const user = await User.findByPk(req.userId);
     
     if (!user) {
@@ -101,10 +101,13 @@ exports.updateProfile = async (req, res) => {
     // Update user
     user.name = name || user.name;
     user.email = email || user.email;
+    user.default_address = defaultAddress || user.default_address;
+    user.occupation = occupation || user.occupation;
+    user.paymentMethod = paymentMethod || user.paymentMethod;
 
     await user.save();
 
-    res.json({ message: 'Profile updated successfully', user: { id: user.id, name: user.name, email: user.email} });
+    res.json({ message: 'Profile updated successfully', user });
   } catch (error) {
     console.error('Update profile error:', error);
     if (error.name === 'SequelizeValidationError') {

@@ -1,16 +1,11 @@
 const authController = require('../controllers/userController');
 const router = require('express').Router();
-const { authenticateToken } = require('../Middleware/authMiddleware');
-const upload = require("../config/multerConfig")
+const { authenticateToken } = require('../middleware/authMiddleware');
 
 router.post('/register', authController.register);
 router.post('/login', authController.login);
-router.get('/protected',  authController.protected);
-router.get('/profile',  authController.getProfile);
-router.put('/profile',  authController.updateProfile);
-router.get('/all', authenticateToken, authController.getAllUsers);
-router.post('/create', authenticateToken, authController.createUser);
-router.put('/:id', authenticateToken, authController.updateUser);
-router.delete('/:id', authenticateToken, authController.deleteUser);
+router.get('/profile', authenticateToken, authController.getProfile);
+router.put('/profile', authenticateToken, authController.updateProfile);
+router.patch('/profile', authenticateToken, authController.updateProfile);
 
 module.exports = router;
