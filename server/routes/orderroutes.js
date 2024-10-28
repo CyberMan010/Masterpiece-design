@@ -9,4 +9,7 @@ router.post('/', authenticateToken, orderController.createOrder);
 // Fetch orders for the authenticated user
 router.get('/user', authenticateToken, orderController.getUserOrders);
 
+// Add this new route
+router.get('/:id', authenticateToken, orderController.getOrderById);
+
 module.exports = router;

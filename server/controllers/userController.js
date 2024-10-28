@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken');
 const { User } = require('../models');
 const JWT_SECRET = 'your_jwt_secret';
 
+
 exports.register = async (req, res) => {
   try {
     const { name, email, password } = req.body;
@@ -187,3 +188,4 @@ exports.deleteUser = async (req, res) => {
     res.status(500).json({ message: 'Error deleting user' });
   }
 };
+

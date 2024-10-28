@@ -81,3 +81,36 @@ exports.getUserOrders = async (req, res) => {
     res.status(500).json({ message: 'Internal server error' });
   }
 };
+
+exports.getOrderById = async (req, res) => {
+  try {
+    const orderId = req.params.id;
+    const userId = req.userId;
+
+    if (!orderId) {
+      return res.status(400).json({ message: 'Order ID is required' });
+    }
+
+    const order = await Order.findOne({
+      where: { 
+        order_id: orderId,
+        user_id: userId
+      },
+      include: [
+        {
+          model: OrderItem,
+          include: [{ model: Product, attributes: ['name', 'price', 'image_url'] }]
+        }
+      ]
+    });
+
+    if (!order) {
+      return res.status(404).json({ message: 'Order not found' });
+    }
+
+    res.status(200).json(order);
+  } catch (error) {
+    console.error('Error fetching order details:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};

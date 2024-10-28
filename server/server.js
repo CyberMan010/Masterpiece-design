@@ -12,8 +12,7 @@ const searchRoute = require('./routes/searchroute');
 const contactRoutes = require('./routes/contactRoutes'); // Ensure this is a function or a router
 const orderRoutes = require('./routes/orderroutes'); // Ensure this import is correct
 const bodyParser = require('body-parser');
-const { authenticateToken } = require('./middleware/authMiddleware'); // Import your middleware
-
+const customRoutes = require('./routes/customdesignroutes');
 // Initialize express app
 const app = express();
 
@@ -41,6 +40,7 @@ app.use('/users', userRouter); // This sets the base path for user routes
 app.use("/api/products", productRoutes)
 app.use("/api/categories", categoryRoutes)
 app.use('/api/orders', orderRoutes); // Ensure this line is present
+app.use('/api/custom', customRoutes); // Ensure this line is present
 
 // Error handling middleware
 app.use((err, req, res, next) => {
