@@ -5,7 +5,7 @@ exports.createOrder = async (req, res) => {
 
   try {
     const { total_amount, items, shipping_address, payment_info } = req.body;
-    const userId = req.user.userId; // Changed from req.user.id to req.user.userId
+    const userId = req.user?.id; // Ensure this matches the user ID field in your User model
 
     // Validate user
     if (!userId) {
