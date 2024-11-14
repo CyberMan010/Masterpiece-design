@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router(); // Initialize the router first
 const customDesignController = require('../controllers/customDesignController');
 const { authenticateToken } = require('../middleware/authMiddleware');
-const upload = require('../middleware/uploadMiddleware'); // Ensure this path is correct
+const upload = require('../config/multerConfig');
 
 // Define routes
 router.post(

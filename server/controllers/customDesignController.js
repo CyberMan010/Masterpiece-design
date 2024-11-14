@@ -4,16 +4,15 @@ const createDesignRequest = async (req, res) => {
   try {
     console.log('Received design request');
     const { email } = req.body;
-    const picture = req.file ? req.file.buffer : null;
-    const userId = req.userId; // Assuming userId is set by the authentication middleware
-
-    if (!email || !picture || !userId) {
-      return res.status(400).json({ message: 'Email, picture, and user ID are required' });
+    const image_url = req.file ? `/uploads/${req.file.filename}` : null;
+    const userId = req.userId;
+    if (!email || !image_url || !userId) {
+      return res.status(400).json({ message: 'Email, image URL, and user ID are required' });
     }
 
     const newRequest = await CustomDesignRequest.create({
       email,
-      picture,
+      image_url,
       userId // Include userId in the creation
     });
 
@@ -28,8 +27,10 @@ const createDesignRequest = async (req, res) => {
 const getUserDesigns = async (req, res) => {
   try {
     const designs = await CustomDesignRequest.findAll({
+      where: { userId: req.userId },
       order: [['request_date', 'DESC']]
     });
+    console.log('Fetched designs:', designs);
     res.status(200).json(designs);
   } catch (error) {
     console.error('Error fetching custom designs:', error);

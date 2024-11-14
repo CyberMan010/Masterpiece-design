@@ -1,7 +1,7 @@
 'use strict';
 const { Model, DataTypes } = require('sequelize');
 
-module.exports = (sequelize, DataTypes) => {
+module.exports = (sequelize) => {
   const CustomDesignRequest = sequelize.define('CustomDesignRequest', {
     id: {
       type: DataTypes.INTEGER,
@@ -20,9 +20,9 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false
     },
-    picture: {
-      type: DataTypes.BLOB,
-      allowNull: false
+    image_url: {
+      type: DataTypes.STRING,
+      allowNull: true
     },
     request_date: {
       type: DataTypes.DATE,
