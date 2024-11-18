@@ -159,14 +159,27 @@ exports.updateUser = async (req, res) => {
   try {
     const { id } = req.params;
     const { name, email, user_type } = req.body;
+    
     const user = await User.findByPk(id);
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
+
+    // Check if email is being changed and if it's already in use
+    if (email !== user.email) {
+      const existingUser = await User.findOne({ where: { email } });
+      if (existingUser) {
+        return res.status(400).json({ message: 'Email already in use' });
+      }
+    }
+
+    // Update user
     user.name = name || user.name;
     user.email = email || user.email;
     user.user_type = user_type || user.user_type;
+
     await user.save();
+
     res.json(user);
   } catch (error) {
     console.error('Update user error:', error);
@@ -178,9 +191,11 @@ exports.deleteUser = async (req, res) => {
   try {
     const { id } = req.params;
     const user = await User.findByPk(id);
+    
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
+
     await user.destroy();
     res.json({ message: 'User deleted successfully' });
   } catch (error) {

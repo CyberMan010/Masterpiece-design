@@ -27,7 +27,6 @@ const createDesignRequest = async (req, res) => {
 const getUserDesigns = async (req, res) => {
   try {
     const designs = await CustomDesignRequest.findAll({
-      where: { userId: req.userId },
       order: [['request_date', 'DESC']]
     });
     console.log('Fetched designs:', designs);
@@ -40,6 +39,7 @@ const getUserDesigns = async (req, res) => {
 
 const getDesignById = async (req, res) => {
   // Implementation will be added later
+  
   res.status(501).json({ message: 'Not implemented yet' });
 };
 
